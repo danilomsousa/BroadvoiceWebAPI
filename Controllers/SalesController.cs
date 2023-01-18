@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Broadvoice_Webapi.Models;
+using Broadvoice_Webapi.DatabaseConnection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Broadvoice_Webapi.Controllers;
 
@@ -9,14 +12,16 @@ public class SalesController : ControllerBase
 {
 
     private readonly ILogger<SalesController> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public SalesController(ILogger<SalesController> logger)
+    public SalesController(ILogger<SalesController> logger, ApplicationDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
     [HttpGet(Name = "GetSales")]
-    public IEnumerable<Sales> Get(string salesperson = "", 
+    public IActionResult Get(string salesperson = "", 
                                 int productCode = 0, 
                                 string useremail = "", 
                                 string city = "", 
@@ -24,18 +29,22 @@ public class SalesController : ControllerBase
                                 DateTime startDate = new DateTime(),
                                 DateTime endDate = new DateTime())
     {
-        using var db = new SalesContext();        
-        FakeData.FakeData.generateData(db);
+        IDBConnection connection = new SalesContext();   
+        var todo = connection.SelectSales(salesperson,productCode,useremail,city,state,startDate,endDate);
 
-        if(endDate == DateTime.MinValue) endDate = DateTime.MaxValue;
-        Console.WriteLine($"start {startDate} end {endDate}");        
+        if (todo is null)
+        {
+            return NotFound();
+        }   
 
-        return db.Sales.Where(sales => sales.SalesPerson.Name == (salesperson == "" ? sales.SalesPerson.Name : salesperson))
-        .Where(sales => sales.Products.Where(product => product.Code == (productCode == 0 ? product.Code : productCode)).Count() > 0)
-        .Where(sales => sales.Customer.Email == (useremail == "" ? sales.Customer.Email : useremail))
-        .Where(sales => sales.Location.City == (city == "" ? sales.Location.City : city))
-        .Where(sales => sales.Location.State == (state == "" ? sales.Location.State : state))
-        .Where(sales => sales.SalesDate >= startDate && sales.SalesDate <= endDate)
-        .ToArray();
+        JsonSerializerOptions options = new()
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true
+        };
+            
+        return Ok(JsonSerializer.Serialize(todo, 
+                                        options));
+        
     }
 }
