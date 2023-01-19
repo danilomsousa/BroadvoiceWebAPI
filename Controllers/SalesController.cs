@@ -43,8 +43,22 @@ public class SalesController : ControllerBase
             WriteIndented = true
         };
             
-        return Ok(JsonSerializer.Serialize(todo, 
+            //todo.Select(sales => sales.SalesPerson)
+        return Ok(JsonSerializer.Serialize(from sales in todo
+                                            select new { SalesPersonName = sales.SalesPerson.Name, SalesPersonEmail = sales.SalesPerson.Email,
+                                                    CustomerName = sales.Customer.Name, CustomerEmail = sales.Customer.Email,
+                                                    SalesCity = sales.Location.City, SalesState = sales.Location.State,
+                                                    ProductName = convertProductMetadata(sales.Products),
+                                                    SalesDate=sales.SalesDate}, 
                                         options));
         
+    }
+
+    private IEnumerable<ProductMetadata> convertProductMetadata(IEnumerable<Product> productsList){
+        List<ProductMetadata> productsMetadataList = new List<ProductMetadata>();
+        foreach(Product p in productsList){
+            productsMetadataList.Add(new ProductMetadata{Code = p.Code, Name = p.Name, Cost = p.Cost});
+        }
+        return productsMetadataList;
     }
 }
