@@ -1,5 +1,5 @@
 # BroadvoiceWebAPI
-Problem
+<h2>Problem</h2>
 
 
 The sales department needs to report the salespeople's activity. After some preliminary interviews with the sales team, we know the following:
@@ -24,8 +24,8 @@ Based on the previous information, you are asked to implement a Web API that ret
   City.
   State.
   
-WebAPI developed using .NET 7 using Entity Framework to map data and a single Get method with the optional parameters for filter data.
+<h2> WebAPI developed using .NET 7 using Entity Framework to map data and a single Get method with the optional parameters for filter data. </h2>
 
-SQL Schema
-<iframe width="100%" height="500px" style="box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); border-radius:15px;" allowtransparency="true" allowfullscreen="true" scrolling="no" title="Embedded DrawSQL IFrame" frameborder="0" src="https://drawsql.app/teams/danilo-sousa-teams/diagrams/broadvoice-salesapi/embed"></iframe>
+<h2>SQL Schema</h2>
+<html><iframe width="100%" height="500px" style="box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); border-radius:15px;" allowtransparency="true" allowfullscreen="true" scrolling="no" title="Embedded DrawSQL IFrame" frameborder="0" src="https://drawsql.app/teams/danilo-sousa-teams/diagrams/broadvoice-salesapi/embed"></iframe><html>
 
